@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>SomeApp</title>
+    <script src="js/angular.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/kendo.all.min.js"></script>
+    <link href="styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+</head>
+<body>
+<div id="example">
+    <div class="demo-section k-header">
+        <div class="box-col" style="width: 420px;">
+            <h1>Курсы</h1>
+            <h4>Something new and interesting</h4>
+            <div data-role="listview"
+                 data-edit-template="edit-template"
+                 data-template="template"
+                 data-bind="source: products,
+                            visible: isVisible,
+                            events: {
+                              save: onSave
+                            }"
+                 style="width: 415px; height: 420px; overflow: auto"></div>
+            <fieldset class="addMore">
+                <legend>Add courses</legend>
+                <p>Кнопка для добавления курса
+                <button id="add" class="k-button k-button-icontext k-add-button" href="#" onclick="top.alert('У вас нет прав на добавление курсов')" >Add a course</button>
+                </p>
+            </fieldset>
+
+        </div>
+    </div>
+    <script type="text/x-kendo-tmpl" id="template">
+        <div class="product-view k-widget">
+            <div class="edit-buttons">
+                <a class="k-button k-button-icontext k-edit-button" href="\\#"><span class="k-icon k-edit"></span></a>
+                <a class="k-button k-button-icontext k-delete-button" href="\\#"><span class="k-icon k-delete"></span></a>
+            </div>
+            <dl>
+                <dt>Title</dt>
+                <dd>#:Title#</dd>
+                <dt>Description</dt>
+                <dd>#:Description#</dd>
+                <dt>Level</dt>
+                <dd>#:Level#</dd>
+                <dt>Year</dt>
+                <dd>#:kendo.toString(Year, "i")#</dd>
+            </dl>
+        </div>
+    </script>
+
+    <script type="text/x-kendo-tmpl" id="edit-template">
+        <div class="product-view k-widget">
+            <div class="edit-buttons">
+                <a class="k-button k-button-icontext k-update-button" href="\\#"><span class="k-icon k-update"></span></a>
+                <a class="k-button k-button-icontext k-cancel-button" href="\\#"><span class="k-icon k-cancel"></span></a>
+            </div>
+            <dl>
+                <dt>Title</dt>
+                <dd>
+                    <input type="text" class="k-textbox" data-bind="value:Title" name="Title" required="required" validationMessage="required" />
+                    <span data-for="Title" class="k-invalid-msg"></span>
+                </dd>
+                <dt>Description</dt>
+                <dd>
+                    <input type="text" class="k-textbox" data-bind="value:Description" name="Description" required="required" validationMessage="required" />
+                    <span data-for="Description" class="k-invalid-msg"></span>
+                </dd>
+                <dt>Level</dt>
+                <dd>
+                    <input type="text" class="k-textbox" data-bind="value:Level" name=":Level" required="required"   validationMessage="required" />
+                    <span data-for="Level" class="k-invalid-msg"></span>
+                </dd>
+                <dt>Year</dt>
+                <dd><input type="text" name="Year"  data-role="numerictextbox" data-type="number" min="2014" data-bind="value:Year" required="required"   validationMessage="required">
+                <span data-for="Year" class="k-invalid-msg"></span>
+                </dd>
+            </dl>
+        </div>
+    </script>
+    <script>
+        var viewModel = kendo.observable({
+            isVisible: true,
+            onSave: function(e) {
+                kendoConsole.log("event :: save(" + kendo.stringify(e.model, null, 4) + ")");
+            },
+            products: new kendo.data.DataSource({
+                schema: {
+                    model: {
+                        id: "ProductID",
+                        fields:{
+                            Title: {type:"text"},
+                            Description: {type:"text"},
+                            Level: {type: "text"},
+                            Year: {type:"number"}
+                        }
+                    }
+                },
+                batch: true,
+                transport: {
+                    read: {
+                        url: "productqs.json",
+                        dataType: "json"
+                    },
+                    update:{
+                        url:"productqus.json",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: "productqus.json",
+                        dataType: "json"
+                    },
+                    parameterMap: function(options, operation) {
+                        if (operation !== "read" && options.models) {
+                            return {models: kendo.stringify(options.models)};
+                        }
+                    }
+                }
+            })
+        });
+        kendo.bind($("#example"), viewModel);
+
+    </script>
+
+    <style scoped>
+        .product-view
+        {
+            float: left;
+            position: relative;
+            width: 411px;
+            margin: -1px -1px 0 0;
+        }
+        .product-view dl
+        {
+            margin: 10px 0;
+            padding: 0;
+            min-width: 0;
+        }
+        .product-view dt, dd
+        {
+            float: left;
+            margin: 0;
+            padding: 3px;
+            height: 32px;
+            width: 190px;
+            line-height: 32px;
+            overflow: hidden;
+        }
+        .product-view dt
+        {
+            clear: left;
+            padding: 3px 5px 3px 0;
+            text-align: right;
+            opacity: 0.6;
+            width: 110px;
+        }
+        .product-view .k-textbox {
+            width: auto;
+        }
+        .edit-buttons
+        {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 26px;
+            height: 160px;
+            padding: 2px 2px 0 3px;
+            margin-left: 17px;
+            background-color: rgba(0,0,0,0.1);
+        }
+        .edit-buttons .k-button
+        {
+            width: 26px;
+            margin-bottom: 1px;
+        }
+        .k-pager-wrap
+        {
+            border-top: 0;
+        }
+        span.k-invalid-msg
+        {
+            position: absolute;
+            margin-left: 6px;
+        }
+        .header
+        {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .box-col
+        {
+            margin-right: auto;
+            margin-left: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            height: 100%;
+        }
+        #example
+        {
+
+        }
+        body
+        {
+            background-color: rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .addMore
+        {
+
+        }
+        #example
+        {
+            background-color: rgba(0,0,0,0.05)
+        }
+    </style>
+</div>
+</body>
+</html>
