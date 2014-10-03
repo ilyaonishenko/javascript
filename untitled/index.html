@@ -20,14 +20,30 @@
             <fieldset class="addMore">
                 <legend>Добавить курс</legend>
                 <p>Кнопка для добавления курса
-                    <a class="k-button k-button-icontext k-add-button" href="#" onclick="top.alert('У вас нет прав на добавление курсов')"><span class="k-icon k-add"></span>Add new record</a>
+                    <button onclick="$('.form').show()" class="k-button k-button-icontext k-add-button"><span class="k-icon k-add"></span>Добавить новый курс</button>
                 </p>
             </fieldset>
+            <div class="form" data-bind="invisible: isInvisible">
+                <fieldset class="addCourse">
+                    <legend>Adding course<a id="closeAdding" class="k-button k-button-icontext k-delete-button" onclick="$('.form').hide()"><span class="k-icon k-delete"></span></a></legend>
+                    <input type="text" class="k-textbox" name="courseTitle" placeholder="Title"
+                           data-bind="value:courseTitle" /><br />
+                    <input type="text" class="k-textbox" name="courseDecsript" placeholder="Description"
+                           data-bind="value: courseDecsript" /><br />
+                    <input type="text" class="k-textbox" name="courseLevel" placeholder="Level"
+                           data-bind="value: courseLevel" /><br />
+                    <input type="text" class="k-textbox" name="courseYear" placeholder="Year"
+                           data-bind="value: courseYear" /><br />
+                    <button id="addpls"class="k-button k-button-icontext k-add-button"><span class="k-icon k-add"></span>Добавить</button>
+                </fieldset>
+            </div>
+            <div id="likelyall">
             <h4>Существующие курсы:</h4>
             <div id="listview1"
                  data-role="listview"
                  data-edit-template="edit-template"
                  data-template="template"
+                 data-editable= "true"
                  data-bind="source: products,
                             visible: isVisible,
                             events: {
@@ -35,6 +51,18 @@
                             }"
                  style="width: 415px; height: 420px; overflow: auto"></div>
         </div>
+        <script>
+            var view2Model = kendo.observable({
+                isInvisible: true,
+                show: function() {
+                    this.set("isInvisible", false);
+                },
+                hide: function () {
+                    this.set("isInvisible",true);
+                }
+            });
+            kendo.bind($(".form"), view2Model);
+        </script>
     <script type="text/x-kendo-tmpl" id="template">
         <div class="product-view k-widget">
             <div class="edit-buttons">
@@ -111,13 +139,8 @@
                         url:"productqus.json",
                         dataType: "json"
                     },
-                    destroy: {
-                        url: "productqus.json",
-                        dataType: "json"
-                    },
                     create: {
-                        url: "productqus.json",
-                        dataType: "json"
+
                     },
                     parameterMap: function(options, operation) {
                         if (operation !== "read" && options.models) {
@@ -127,8 +150,9 @@
                 }
             })
         });
-        kendo.bind($("#listview1"), viewModel);
+        kendo.bind($("#likelyall"), viewModel);
     </script>
+    </div>
 
     <style scoped>
         .product-view
@@ -202,15 +226,17 @@
             margin-left: auto;
             margin-top: auto;
             margin-bottom: auto;
+            text-align: center;
         }
         body
         {
             background-color: rgba(0,0,0,0.05);
             height: 100%;
         }
-        .addMore
+        #closeAdding
         {
-
+            margin-left: 20px;
+            align-content: flex-end;
         }
         html
         {
