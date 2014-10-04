@@ -25,16 +25,16 @@
             </fieldset>
             <div class="form" data-bind="invisible: isInvisible">
                 <fieldset class="addCourse">
-                    <legend>Adding course<a id="closeAdding" class="k-button k-button-icontext k-delete-button" onclick="$('.form').hide()"><span class="k-icon k-delete"></span></a></legend>
-                    <input type="text" class="k-textbox" name="courseTitle" placeholder="Title"
+                    <legend>Добавление курса:<a id="closeAdding" class="k-button k-button-icontext k-delete-button" onclick="$('.form').hide()"><span class="k-icon k-delete"></span></a></legend>
+                    <input type="text" class="k-textbox" name="courseTitle" placeholder="Название"
                            data-bind="value:courseTitle" /><br />
-                    <input type="text" class="k-textbox" name="courseDecsript" placeholder="Description"
+                    <input type="text" class="k-textbox" name="courseDecsript" placeholder="Описание"
                            data-bind="value: courseDecsript" /><br />
-                    <input type="text" class="k-textbox" name="courseLevel" placeholder="Level"
+                    <input type="text" class="k-textbox" name="courseLevel" placeholder="Уровень"
                            data-bind="value: courseLevel" /><br />
-                    <input type="text" class="k-textbox" name="courseYear" placeholder="Year"
+                    <input type="number" class="k-textbox" name="courseYear" placeholder="Год"
                            data-bind="value: courseYear" /><br />
-                    <button id="addpls"class="k-button k-button-icontext k-add-button"><span class="k-icon k-add"></span>Добавить</button>
+                    <button id="addpls"class="k-button k-button-icontext k-add-button" onclick="top.alert('Круто, но не работает :(')"><span class="k-icon k-add"></span>Добавить</button>
                 </fieldset>
             </div>
             <div id="likelyall">
@@ -70,14 +70,18 @@
                 <a class="k-button k-button-icontext k-delete-button" href="\\#"><span class="k-icon k-delete"></span></a>
             </div>
             <dl>
-                <dt>Title</dt>
+                <dt>Название:</dt>
                 <dd>#:Title#</dd>
-                <dt>Description</dt>
+                <dt>Краткое описание</dt>
+                <dd>#:ShortDes#</dd>
+                <dt>Описание:</dt>
                 <dd>#:Description#</dd>
-                <dt>Level</dt>
+                <dt>Уровень:</dt>
                 <dd>#:Level#</dd>
-                <dt>Year</dt>
-                <dd>#:kendo.toString(Year, "i")#</dd>
+                <dt>Начало:</dt>
+                <dd>#:Begin#</dd>
+                <dt>Конец:</dt>
+                <dd>#:End#</dd>
             </dl>
         </div>
     </script>
@@ -94,6 +98,11 @@
                     <input type="text" class="k-textbox" data-bind="value:Title" name="Title" required="required" validationMessage="required" />
                     <span data-for="Title" class="k-invalid-msg" data-bind="text:Title"></span>
                 </dd>
+                <dt>ShortDes</dt>
+                <dd>
+                    <input type="text" class="k-textbox" data-bind="value:ShortDes" name ="ShortDes" required="required" validationMessage="required" />
+                    <span data-for="ShortDes" class="k-invalid-msg" data-bind="text:ShortDes"></span>
+                </dd>
                 <dt>Description</dt>
                 <dd>
                     <input type="text" class="k-textbox" data-bind="value:Description" name="Description" required="required" validationMessage="required" />
@@ -104,18 +113,23 @@
                     <input type="text" class="k-textbox" data-bind="value:Level" name=":Level" required="required"   validationMessage="required" />
                     <span data-for="Level" class="k-invalid-msg"></span>
                 </dd>
-                <dt>Year</dt>
-                <dd><input type="text" name="Year"  class="k-textbox" data-bind="value:Year" required="required"   validationMessage="required">
-                <span data-for="Year" class="k-invalid-msg"></span>
+                <dt>Begin</dt>
+                <dd><input id="datepicker" data-role="datepicker" name="Begin" data-bind="value:Begin" required="required"   validationMessage="required">
+                <span data-for="Begin" class="k-invalid-msg"></span>
+                </dd>
+                <dt>End</dt>
+                <dd><input id="datepicker" data-role="datepicker" name="End" data-bind="value:End" required="required"   validationMessage="required">
+                <span data-for="End" class="k-invalid-msg"></span>
                 </dd>
             </dl>
         </div>
     </script>
     <script>
+        var list
         var viewModel = kendo.observable({
             isVisible: true,
             onSave: function(e) {
-                kendoConsole.log("event :: save(" + kendo.stringify(e.model, null, 4) + ")");
+                kendoConsole.log("event :: save(" + kendo.stringify(e.model, null, 4)+")");
             },
             products: new kendo.data.DataSource({
                 schema: {
@@ -123,9 +137,11 @@
                         id: "ProductID",
                         fields:{
                             Title: {type:"text"},
+                            ShortDes:{type:"text"},
                             Description: {type:"text"},
                             Level: {type: "text"},
-                            Year: {type: "number"}
+                            Begin: {type: "selectedDate"},
+                            End:{type:"selectedDate"}
                         }
                     }
                 },
@@ -173,7 +189,7 @@
             float: left;
             margin: 0;
             padding: 3px;
-            height: 32px;
+            height: 35px;
             width: 190px;
             line-height: 32px;
             overflow: hidden;
@@ -194,11 +210,11 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 26px;
-            height: 160px;
+            width: 60px;
+            height: 60px;
             padding: 2px 2px 0 3px;
-            margin-left: 17px;
-            background-color: rgba(0,0,0,0.1);
+            margin-left: 0;
+            background-color: rgba(0,0,0,0);
         }
         .edit-buttons .k-button
         {
@@ -233,8 +249,7 @@
             background-color: rgba(0,0,0,0.05);
             height: 100%;
         }
-        #closeAdding
-        {
+        #closeAdding {
             margin-left: 20px;
             align-content: flex-end;
         }
