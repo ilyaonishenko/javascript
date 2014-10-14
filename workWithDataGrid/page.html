@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Some Page</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="jquery-1.11.1.min.js"></script>
+    <script src="js/kendo.all.min.js"></script>
+    <script src="myrepeater.js"></script>
+    <script src="jquery.dataTables.min.js"></script>
+    <link href="styles/kendo.common.min.css" type="text/css">
+    <link href="styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="jquery.dataTables.css" type="text/css">
+</head>
+<body>
+<label for="newItem">Enter a new item</label>
+<input id="newItem" data-bind="value:newItem" class="k-textbox"><br>
+<label for="descItem">Enter a desc item</label>
+<input id="descItem" data-bind="value:descItem" class="k-textbox"><br>
+<label for="greatItem">Enter a great Item</label>
+<input id="greatItem" data-bind="value:greatItem" class="k-textbox"><br>
+<button class="k-button" data-bind="click:add">Add item</button>
+<!--<div data-role="Repeater" data-bind="source:itemq" data-template="template">
+    <script type="text/x-kendo-template" id="template">
+        <div>
+            <table id="table_id" class="display">
+                <thead>
+                <th>newItem</th>
+                <th>descItem</th>
+                <th>greatItem</th>
+                </thead>
+                <tbody >
+                <tr>
+                    <td>#:newItem#</td>
+                    <td>#:descItem#</td>
+                    <td>#:greatItem#</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </script>
+</div>
+что за говно тут было-->
+<table data-role="Repeater" data-bind="source:itemq" data-template="template" class="display" id="table_id">
+    <thead>
+    <th>newItem</th>
+    <th>descItem</th>
+    <th>greatItem</th>
+    </thead>
+    <script type="text/x-kendo-template" id="template">
+    <tbody >
+    <tr>
+        <td>#:newItem#</td>
+        <td>#:descItem#</td>
+        <td>#:greatItem#</td>
+    </tr>
+    </tbody>
+    </script>
+</table>
+<script>
+    var viewModel = kendo.observable({
+        itemq:[{"newItem":"hello","descItem":"descccc","greatItem":"GREAT"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"}],
+        newItem: null,
+        descItem: null,
+        greatItem: null,
+        add: function(e){
+            /*if (this.get("newItem")){
+                this.get("items").push(this.get("newItem"));
+            }*/
+            this.itemq.push({"newItem":this.get("newItem"),"descItem":this.get("descItem"),"greatItem":this.get("greatItem")});
+        }
+    })
+    kendo.bind(document.body,viewModel);
+</script>
+</body>
+</html>
