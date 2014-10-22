@@ -8,9 +8,9 @@
     <script src="js/kendo.all.min.js"></script>
     <script src="myrepeater.js"></script>
     <script src="jquery.dataTables.min.js"></script>
-    <link href="styles/kendo.common.min.css" type="text/css">
-    <link href="styles/kendo.default.min.css" rel="stylesheet" />
-    <link href="jquery.dataTables.css" type="text/css">
+    <link href="styles/kendo.common.min.css" rel="stylesheet" type="text/css">
+    <link href="styles/kendo.default.min.css" rel="stylesheet" type="text/css" />
+    <link href="jquery.dataTables.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <label for="newItem">Enter a new item</label>
@@ -41,11 +41,13 @@
     </script>
 </div>
 что за говно тут было-->
-<table data-role="Repeater" data-bind="source:itemq" data-template="template" class="display" id="table_id">
+<table id="table_id" data-role="Repeater" data-bind="source:itemq" data-template="template" class="display" id="table_id">
     <thead>
+    <tr>
     <th>newItem</th>
     <th>descItem</th>
     <th>greatItem</th>
+    </tr>
     </thead>
     <script type="text/x-kendo-template" id="template">
     <tbody >
@@ -58,18 +60,58 @@
     </script>
 </table>
 <script>
+
     var viewModel = kendo.observable({
-        itemq:[{"newItem":"hello","descItem":"descccc","greatItem":"GREAT"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"}],
+        itemq:[{"newItem":"hello","descItem":"descccc","greatItem":"GREAT"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"}],
+        /*transport:
+        {
+            read:{
+                url:"package.json",
+                dataType:"json"
+            },
+            update:{
+                url:"package.json",
+                dataType:"json"
+            },
+            parameterMap: function(options, operation) {
+                if (operation !== "read" && options.models) {
+                    return {models: kendo.stringify(options.models)};
+                }
+            }
+        },*/
         newItem: null,
         descItem: null,
         greatItem: null,
+        refreshTable: function(e){
+            table.destroy();
+            table = $('#table_id').DataTable({
+                data:viewModel.itemq,
+                columns:[
+                    {data:'newItem'},
+                    {data:'descItem'},
+                    {data:'greatItem'}
+                ]
+            });
+        },
         add: function(e){
             /*if (this.get("newItem")){
                 this.get("items").push(this.get("newItem"));
             }*/
             this.itemq.push({"newItem":this.get("newItem"),"descItem":this.get("descItem"),"greatItem":this.get("greatItem")});
+            this.refreshTable();
         }
-    })
+
+    });
+    $(document).ready(function(){
+        table = $('#table_id').DataTable({
+            data:viewModel.itemq,
+            columns:[
+                {data:'newItem'},
+                {data:'descItem'},
+                {data:'greatItem'}
+            ]
+        });
+    });
     kendo.bind(document.body,viewModel);
 </script>
 </body>
