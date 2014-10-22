@@ -5,14 +5,21 @@
     <title>Some Page</title>
     <script src="js/jquery.min.js"></script>
     <script src="jquery-1.11.1.min.js"></script>
+    <script src="js/angular.min.js"></script>
     <script src="js/kendo.all.min.js"></script>
     <script src="myrepeater.js"></script>
     <script src="jquery.dataTables.min.js"></script>
     <link href="styles/kendo.common.min.css" rel="stylesheet" type="text/css">
     <link href="styles/kendo.default.min.css" rel="stylesheet" type="text/css" />
+    <link href="styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="styles/kendo.dataviz.default.min.css" rel="stylesheet" />
     <link href="jquery.dataTables.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<button class="k-button" onclick="$('.addInTable').show()">Add in table</button>
+<div class="addInTable" data-bind="invisible:isInvisible">
+<fieldset>
+    <legend>Добавить в таблицу</legend>
 <label for="newItem">Enter a new item</label>
 <input id="newItem" data-bind="value:newItem" class="k-textbox"><br>
 <label for="descItem">Enter a desc item</label>
@@ -20,6 +27,27 @@
 <label for="greatItem">Enter a great Item</label>
 <input id="greatItem" data-bind="value:greatItem" class="k-textbox"><br>
 <button class="k-button" data-bind="click:add">Add item</button>
+</fieldset>
+</div>
+<script>
+    var adding = kendo.observable({
+        isInvisible: true,
+        show: function(){
+            this.set("isInvisible",false);
+        },
+        hide: function(){
+            this.set("isInvisible",true);
+        },
+        add: function(e){
+            /*if (this.get("newItem")){
+             this.get("items").push(this.get("newItem"));
+             }*/
+            viewModel.itemq.push({"newItem":this.get("newItem"),"descItem":this.get("descItem"),"greatItem":this.get("greatItem")});
+            viewModel.refreshTable();
+        }
+    });
+    kendo.bind($(".addInTable"),adding);
+</script>
 <!--<div data-role="Repeater" data-bind="source:itemq" data-template="template">
     <script type="text/x-kendo-template" id="template">
         <div>
@@ -112,7 +140,7 @@
             ]
         });
     });
-    kendo.bind(document.body,viewModel);
+    kendo.bind($('#table_id'),viewModel);
 </script>
 </body>
 </html>
