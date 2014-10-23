@@ -9,6 +9,7 @@
     <script src="js/kendo.all.min.js"></script>
     <script src="myrepeater.js"></script>
     <script src="jquery.dataTables.min.js"></script>
+    <script src="console.js"></script>
     <link href="styles/kendo.common.min.css" rel="stylesheet" type="text/css">
     <link href="styles/kendo.default.min.css" rel="stylesheet" type="text/css" />
     <link href="styles/kendo.dataviz.min.css" rel="stylesheet" />
@@ -19,7 +20,7 @@
 <button class="k-button" onclick="$('.addInTable').show()">Add in table</button>
 <div class="addInTable" data-bind="invisible:isInvisible">
 <fieldset>
-    <legend>Добавить в таблицу</legend>
+    <legend>Добавить в таблицу<a id="closeAdding" class="k-button k-button-icontext k-delete-button" onclick="$('.addInTable').hide()"><span class="k-icon k-delete"></span></a></legend>
 <label for="newItem">Enter a new item</label>
 <input id="newItem" data-bind="value:newItem" class="k-textbox"><br>
 <label for="descItem">Enter a desc item</label>
@@ -87,26 +88,56 @@
     </tbody>
     </script>
 </table>
+<h4>Console</h4>
+<div class="console"></div>
 <script>
-
-    var viewModel = kendo.observable({
-        itemq:[{"newItem":"hello","descItem":"descccc","greatItem":"GREAT"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"}],
-        /*transport:
-        {
+    var dataSource = new kendo.data.DataSource({
+        transport:{
             read:{
                 url:"package.json",
                 dataType:"json"
-            },
-            update:{
-                url:"package.json",
-                dataType:"json"
-            },
-            parameterMap: function(options, operation) {
-                if (operation !== "read" && options.models) {
-                    return {models: kendo.stringify(options.models)};
+            }
+        }
+    });
+    dataSource.fetch(function(){
+        var data = this.data();
+        kendoConsole.log(data[1].newItem);
+    });
+    dataSource.read();
+    var viewModel = kendo.observable({
+        itemsSource:new kendo.data.DataSource({
+           transport:{
+               read:{
+                   url:"package.json",
+                   dataType:"json"
+               },
+               update:{
+                   url:"package.json",
+                   dataType: "json"
+               }
+           },
+                    parameterMap: function(options, operation) {
+                        if (operation !== "read" && options.models) {
+                            return {
+                                models: kendo.stringify(options.models)
+                            };
+                        }
+                        return options;
+                    },
+            batch: true,
+            schema: {
+                model:
+                {
+                    fields:
+                    {
+                        'newItem':{type:"text"},
+                        'descItem':{type:"text"},
+                        'greatItem':{type:"text"}
+                    }
                 }
             }
-        },*/
+        }),
+        itemq:[{"newItem":"hello","descItem":"descccc","greatItem":"GREAT"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"},{"newItem":"hello2","descItem":"descccc2","greatItem":"GREAT2"}],
         newItem: null,
         descItem: null,
         greatItem: null,
@@ -120,16 +151,9 @@
                     {data:'greatItem'}
                 ]
             });
-        },
-        add: function(e){
-            /*if (this.get("newItem")){
-                this.get("items").push(this.get("newItem"));
-            }*/
-            this.itemq.push({"newItem":this.get("newItem"),"descItem":this.get("descItem"),"greatItem":this.get("greatItem")});
-            this.refreshTable();
         }
-
     });
+
     $(document).ready(function(){
         table = $('#table_id').DataTable({
             data:viewModel.itemq,
@@ -139,6 +163,7 @@
                 {data:'greatItem'}
             ]
         });
+        kendoConsole.log(viewModel.itemq.length);
     });
     kendo.bind($('#table_id'),viewModel);
 </script>
